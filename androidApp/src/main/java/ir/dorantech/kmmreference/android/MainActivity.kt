@@ -16,9 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
 import ir.dorantech.kmmreference.AndroidMethods.getValueAndroid
 import ir.dorantech.kmmreference.AndroidMethods.toJsonAndroid
 import ir.dorantech.kmmreference.Greeting
+import ir.dorantech.kmmreference.simple_ktor.Ktor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 //import androidx.compose.web.WebViewSource
@@ -33,6 +35,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) { MainView() }
             }
+        }
+        lifecycleScope.launch {
+            Ktor.simpleGet()
+            Ktor.ktorPostSample()
         }
     }
 
@@ -65,13 +71,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun GreetingView(text: String) {
         Text(text = text)
-    }
-
-    @Composable
-    fun KtorSample(scope: CoroutineScope, text: (String) -> Unit) {
-        Button(onClick = {
-            scope.launch { text(Greeting().ktorTest()) }
-        }) { Text(text = "Call Ktor") }
     }
 
     @Composable

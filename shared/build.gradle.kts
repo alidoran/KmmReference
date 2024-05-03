@@ -28,6 +28,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.serialization.common)
             implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.negotiation)
+            implementation(libs.ktor.json)
+            implementation(libs.ktor.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.json)
         }
@@ -37,11 +41,12 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.webkit)
-            implementation(libs.ktor.serialization.jvm)
+            implementation(libs.ktor.client.serialization.jvm)
+            implementation(libs.kotlinx.coroutines.core)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation(libs.ktor.serialization.native)
+//            implementation(libs.ktor.serialization.native)
         }
     }
 }

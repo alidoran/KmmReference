@@ -1,8 +1,5 @@
 package ir.dorantech.kmmreference
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.delay
 
 class Greeting {
@@ -10,12 +7,6 @@ class Greeting {
 
     fun greet(): String {
         return "Hello, ${platform.name}!"
-    }
-
-    suspend fun ktorTest(): String {
-        val client = HttpClient()
-        val response = client.get("https://ktor.io/docs/")
-        return response.bodyAsText()
     }
 
     suspend fun getUrl(): String{
