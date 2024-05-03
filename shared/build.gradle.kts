@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -28,9 +29,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.serialization.common)
             implementation(libs.ktor.client.cio)
-            implementation(libs.ktor.client.auth)
+//            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.negotiation)
-            implementation(libs.ktor.json)
+//            implementation(libs.ktor.json)
             implementation(libs.ktor.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.json)

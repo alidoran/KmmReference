@@ -9,8 +9,9 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.setBody
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.utils.io.InternalAPI
+import kotlinx.serialization.Serializable
 
 object Ktor {
     suspend fun simpleGet() {
@@ -22,7 +23,12 @@ object Ktor {
     }
 
 //    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    @OptIn(InternalAPI::class)
+
+    @Serializable
+    data class KeyValue(
+        val key: String,
+        val value: String
+    )
     suspend fun ktorPostSample() {
     val client = HttpClient {
         install(ContentNegotiation) {
@@ -30,15 +36,12 @@ object Ktor {
         }
     }
 
-        val requestBody = mapOf(
-            "userId" to 1,
-            "title" to "New Post Title",
-            "body" to "New Post Body"
-        )
+        val requestBody =
+            KeyValue("userId" , "1840")
 
         val response: HttpResponse = client.post("https://jsonplaceholder.typicode.com/posts") {
             contentType(ContentType.Application.Json)
-            body = requestBody
+            setBody(requestBody)
         }
 
         val responseBody = response.bodyAsText()

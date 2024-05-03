@@ -37,14 +37,14 @@ class MainActivity : ComponentActivity() {
             }
         }
         lifecycleScope.launch {
-            Ktor.simpleGet()
+//            Ktor.simpleGet()
             Ktor.ktorPostSample()
         }
     }
 
     @Composable
     fun MainView() {
-        var text by rememberSaveable { mutableStateOf(Greeting().greet()) }
+        val text by rememberSaveable { mutableStateOf(Greeting().greet()) }
         Column {
             GreetingView(text = text)
 //            KtorSample(lifecycleScope) { text = it }
@@ -53,11 +53,6 @@ class MainActivity : ComponentActivity() {
 //            WebViewDemoScree()
             jsonCompare()
         }
-    }
-
-    private @Composable
-    fun WebViewDemoScree() {
-        TODO("Not yet implemented")
     }
 
     @Preview
