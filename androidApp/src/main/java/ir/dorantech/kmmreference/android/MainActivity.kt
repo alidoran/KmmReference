@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
@@ -35,10 +38,6 @@ class MainActivity : ComponentActivity() {
                 ) { MainView() }
             }
         }
-        lifecycleScope.launch {
-//            Ktor.simpleGet()
-            Ktor.ktorPostSample()
-        }
     }
 
     @Composable
@@ -46,12 +45,10 @@ class MainActivity : ComponentActivity() {
         val text by rememberSaveable { mutableStateOf(Greeting().greet()) }
         Column {
             GreetingView(text = text)
-//            KtorSample(lifecycleScope) { text = it }
             ShowWebview(lifecycleScope)
 //            MyWebView2()
-//            WebViewDemoScree()
             MigrateToNewJson()
-
+            Ktor()
         }
     }
 
@@ -95,7 +92,21 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MigrateToNewJson() {
         val oldResultIsSameAsNew = Json.jsonCompare()
-        Text(text = "The equality of Json between the Android module and the common module is " +
-                "$oldResultIsSameAsNew")
+        Text(
+            text = "The equality of Json between the Android module and the common module is " +
+                    "$oldResultIsSameAsNew"
+        )
+    }
+
+    @Composable
+    fun Ktor() {
+        var simpleGetResult by remember{mutableStateOf("")}
+        var simplePost by remember{mutableStateOf("")}
+        LaunchedEffect(Unit) {
+            lifecycleScope.launch { simpleGetResult = Ktor.simpleGet() }
+            lifecycleScope.launch { simplePost = Ktor.simplePost() }
+        }
+        Text(text = "The status code of simpleGet is $simpleGetResult")
+        Text(text = "The status code of simplePost is $simpleGetResult")
     }
 }

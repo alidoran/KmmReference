@@ -14,30 +14,31 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 
 object Ktor {
-    suspend fun simpleGet() {
+    suspend fun simpleGet(): String {
         val client = HttpClient(CIO)
         val response: HttpResponse = client.get("https://ktor.io/")
         println(response.status)
         println(response.bodyAsText())
         client.close()
+        return response.status.toString()
     }
 
-//    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-
+    //    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     @Serializable
     data class KeyValue(
         val key: String,
         val value: String
     )
-    suspend fun ktorPostSample() {
-    val client = HttpClient {
-        install(ContentNegotiation) {
-            json()
+
+    suspend fun simplePost(): String {
+        val client = HttpClient {
+            install(ContentNegotiation) {
+                json()
+            }
         }
-    }
 
         val requestBody =
-            KeyValue("userId" , "1840")
+            KeyValue("userId", "1840")
 
         val response: HttpResponse = client.post("https://jsonplaceholder.typicode.com/posts") {
             contentType(ContentType.Application.Json)
@@ -48,5 +49,6 @@ object Ktor {
         println(responseBody)
 
         client.close()
+        return response.status.toString()
     }
 }
