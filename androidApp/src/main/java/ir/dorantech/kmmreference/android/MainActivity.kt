@@ -12,17 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
-import ir.dorantech.kmmreference.AndroidMethods.getValueAndroid
-import ir.dorantech.kmmreference.AndroidMethods.toJsonAndroid
 import ir.dorantech.kmmreference.Greeting
+import ir.dorantech.kmmreference.equevelents_tools.Json
 import ir.dorantech.kmmreference.simple_ktor.Ktor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 //import androidx.compose.web.WebViewSource
 
 class MainActivity : ComponentActivity() {
@@ -48,10 +47,11 @@ class MainActivity : ComponentActivity() {
         Column {
             GreetingView(text = text)
 //            KtorSample(lifecycleScope) { text = it }
-//            ShowWebview(lifecycleScope)
+            ShowWebview(lifecycleScope)
 //            MyWebView2()
 //            WebViewDemoScree()
-            jsonCompare()
+            MigrateToNewJson()
+
         }
     }
 
@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ShowWebview(scope: CoroutineScope,){
+    fun ShowWebview(scope: CoroutineScope) {
         Button(onClick = {
             scope.launch {
                 val myWebView = WebView(this@MainActivity)
@@ -92,16 +92,10 @@ class MainActivity : ComponentActivity() {
         })
     }
 
-    fun jsonCompare(){
-        val jsonString = "{\"name\":\"Alice\",\"age\":25}"
-
-        val androidJsonObject = jsonString.toJsonAndroid()
-
-
-        val androidValue = androidJsonObject.getValueAndroid("name")
-
-
-
-        val a = androidValue
+    @Composable
+    fun MigrateToNewJson() {
+        val oldResultIsSameAsNew = Json.jsonCompare()
+        Text(text = "The equality of Json between the Android module and the common module is " +
+                "$oldResultIsSameAsNew")
     }
 }

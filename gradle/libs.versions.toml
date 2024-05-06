@@ -1,20 +1,23 @@
 [versions]
+#plugins
 agp = "8.1.4"
 kotlin = "1.9.23"
+kotlin-plugin-serialization = '1.9.23'
+#compose
 compose = "1.6.7"
 compose-compiler = "1.5.12"
 compose-material3 = "1.2.1"
-androidx-activityCompose = "1.9.0"
+#ktor
 ktor = "2.3.10"
-coroutines = "1.8.1-Beta"
-webkit = '1.11.0'
-kotlinx-json = '1.6.3'
 ktor-auth = '3.0.0-beta-1'
 ktor-negotiation = '2.3.4'
 ktor-serialization-json = '2.3.4'
 ktor-json = '2.3.10'
-kotlin-plugin-serialization = '1.9.23'
-
+#solo
+androidx-activityCompose = "1.9.0"
+coroutines = "1.8.1-Beta"
+webkit = '1.11.0'
+kotlinx-json = '1.6.3'
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -22,10 +25,8 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-json" }
 webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 # ktor
@@ -35,9 +36,7 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-cio = { module ="io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-serialization-common = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
 ktor_client-serialization-jvm = { module ="io.ktor:ktor-client-serialization-jvm", version.ref = "ktor" }
-ktor-client-auth = { module ="io.ktor:ktor-client-auth", version.ref = "ktor-auth" }
 ktor-client-negotiation = { module ="io.ktor:ktor-client-content-negotiation", version.ref = "ktor-negotiation" }
-ktor-json = { module ="io.ktor:ktor-client-json", version.ref = "ktor-json" }
 ktor-serialization-json = { module ="io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-serialization-json" }
 
 
