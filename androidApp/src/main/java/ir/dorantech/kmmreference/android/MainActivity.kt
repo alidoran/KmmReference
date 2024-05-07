@@ -1,6 +1,10 @@
 package ir.dorantech.kmmreference.android
 
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
@@ -16,14 +20,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
+import ir.dorantech.kmmreference.FakeApi
 import ir.dorantech.kmmreference.Greeting
 import ir.dorantech.kmmreference.equevelents_tools.Json
 import ir.dorantech.kmmreference.simple_ktor.Ktor
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 //import androidx.compose.web.WebViewSource
 
@@ -43,10 +51,12 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainView() {
         val text by rememberSaveable { mutableStateOf(Greeting().greet()) }
+        val url by rememberSaveable { mutableStateOf("") }
+
         Column {
             GreetingView(text = text)
             ShowWebview(lifecycleScope)
-//            MyWebView2()
+            loadObservableHtml()
             MigrateToNewJson()
             Ktor()
         }
@@ -79,14 +89,63 @@ class MainActivity : ComponentActivity() {
         }) { Text(text = "Show web after 2 seconds") }
     }
 
+    private val webViewClient = object : WebViewClient() {
+        override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
+            Log.d("webviewInActivity", "onPageFinished: $url")
+        }
+
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            Log.d("webviewInActivity", "onPageStarted: $url")
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
     @Composable
-    fun MyWebView2() {
-        AndroidView(factory = { context ->
-            WebView(context).apply {
-                webViewClient = WebViewClient()
-                loadUrl("http://www.goole.com")
+    fun loadObservableHtml() {
+        var htmlContent by remember { mutableStateOf("") }
+        val context = LocalContext.current
+
+        Column {
+            if (htmlContent.isNotEmpty())
+                AndroidView(factory = { WebView(context) }) { webView ->
+                    val webSettings = webView.settings
+                    webSettings.javaScriptEnabled = true
+                    webView.webViewClient = webViewClient
+                    webView.getSettings().allowFileAccess = true
+                    webView.addJavascriptInterface(JSInterface(), "JSInterface")
+                    webView.loadUrl(htmlContent)
+                }
+            Button(onClick = {
+                fetchAndLoadHtml { newHtmlContent ->
+                    htmlContent = newHtmlContent
+                }
+            }) {
+                Text("Load local observable html")
             }
-        })
+        }
+    }
+
+    private fun fetchAndLoadHtml(onHtmlLoaded: (String) -> Unit) {
+        lifecycleScope.launch {
+            val content = withContext(Dispatchers.IO) {
+                FakeApi.fetchUrl()
+            }
+            onHtmlLoaded(content)
+        }
+    }
+
+    class JSInterface internal constructor() {
+        @JavascriptInterface
+        fun toastMe(text: String?) {
+            Log.d("JSInterface", "toastMe: $text")
+        }
+
+        @JavascriptInterface
+        fun notifyMe(text: String?) {
+            Log.d("JSInterface", "notifyMe: $text")
+        }
     }
 
     @Composable
@@ -100,8 +159,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun Ktor() {
-        var simpleGetResult by remember{mutableStateOf("")}
-        var simplePost by remember{mutableStateOf("")}
+        var simpleGetResult by remember { mutableStateOf("") }
+        var simplePost by remember { mutableStateOf("") }
         LaunchedEffect(Unit) {
             lifecycleScope.launch { simpleGetResult = Ktor.simpleGet() }
             lifecycleScope.launch { simplePost = Ktor.simplePost() }

@@ -12,6 +12,8 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.setBody
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 object Ktor {
     suspend fun simpleGet(): String {
@@ -39,6 +41,7 @@ object Ktor {
 
         val requestBody =
             KeyValue("userId", "1840")
+        Json.encodeToString(requestBody)
 
         val response: HttpResponse = client.post("https://jsonplaceholder.typicode.com/posts") {
             contentType(ContentType.Application.Json)
