@@ -19,10 +19,12 @@
     <script>
             function toastMe() {
                 var text = document.getElementById("text").value;
+                window.webkit.messageHandlers.toastMe.postMessage(text);
                 JSInterface.toastMe(text);
             }
             function notifyMe() {
                 var text = document.getElementById("text").value;
+                window.webkit.messageHandlers.notifyMe.postMessage(text);
                 JSInterface.notifyMe(text);
             }
 

@@ -130,7 +130,7 @@ class MainActivity : ComponentActivity() {
     private fun fetchAndLoadHtml(onHtmlLoaded: (String) -> Unit) {
         lifecycleScope.launch {
             val content = withContext(Dispatchers.IO) {
-                FakeApi.fetchUrl()
+                FakeApi().fetchUrl()
             }
             onHtmlLoaded(content)
         }

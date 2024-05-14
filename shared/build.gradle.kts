@@ -5,6 +5,7 @@ plugins {
 }
 
 kotlin {
+    task("testClasses")
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -37,7 +38,7 @@ kotlin {
             implementation(libs.kotlinx.json)
         }
         commonTest.dependencies {
-            implementation(libs.kotlin.test)
+//            implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
