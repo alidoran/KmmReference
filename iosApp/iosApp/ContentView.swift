@@ -2,17 +2,87 @@ import SwiftUI
 import shared
 import WebKit
 
+class SwiftCallback: ApiResult, ObservableObject {
+    @Published var response: String = ""
+    @Published var currentUrl: String = ""
+
+    func onResult(response: String) {
+        DispatchQueue.main.async {
+            self.response = response
+            print("Success: \(response)")
+        }
+    }
+
+    func onUrl(url: String) {
+        DispatchQueue.main.async {
+            self.currentUrl = url
+            print("called:onUrl")
+        }
+    }
+
+    func onSampleComplexDataClass(sampleComplexDataClass: SampleComplexDataClass?){
+        DispatchQueue.main.async {
+            if let name = sampleComplexDataClass?.name{
+                print(name)
+                }
+        }
+    }
+}
+
 struct ContentView: View {
+    @State private var simpleWebViewShow = false
+    @State private var webViewOpenListenerShow = false
+    @State private var webViewOpenLoadListenerShow = false
+
+
     let greet = Greeting().greet()
+    @ObservedObject var apiStringCallback = SwiftCallback()
+    @ObservedObject var apiUrlCallback = SwiftCallback()
+    @ObservedObject var apiDataClassCallback = SwiftCallback()
+
     var body: some View {
-            MyWebView()
-//		Text(greet)
-//		SimpleWebView(url: URL(string: "https://www.google.com")!)
-//      WebViewOpenListener(url: URL(string: "https://www.google.com")!)
-//      self.navigationController?.pushViewController(viewController, animated: true)
-//      WebViewOpenLoadListener(url: URL(string: "https://www.google.com")!)
-//      WebViewOpenLoadListener(url: URL(string: "https://reliable-crocodile.static.domains")!)
-	}
+    VStack{
+//    self.navigationController?.pushViewController(viewController, animated: true)
+        MyWebView(callback: apiUrlCallback)
+          	  Text(greet)
+
+            Button("Simple Web View"){
+                self.simpleWebViewShow.toggle()
+            }
+            .sheet(isPresented: $simpleWebViewShow){
+                SimpleWebView(url: URL(string: "https://www.google.com")!)
+            }
+
+            Button("WebView Open Listener"){
+                self.webViewOpenListenerShow.toggle()
+            }
+            .sheet(isPresented: $webViewOpenListenerShow){
+                let url = URL(string: "https://www.google.com")!
+                WebViewOpenListener(url: url)
+            }
+
+            Button("WebView Open Load Listener"){
+                self.webViewOpenLoadListenerShow.toggle()
+            }
+            .sheet(isPresented: $webViewOpenLoadListenerShow){
+                WebViewOpenLoadListener(url: URL(string: "https://www.google.com")!)
+            }
+
+            Button("Call a callback api result"){
+                FakeApi().callApiByCallback(apiResult: apiStringCallback)
+            }
+            Text(apiStringCallback.response)
+
+            Button("Call a Url Address"){
+                FakeApi().callUrlAddressByCallback(apiResult: apiUrlCallback)
+            }
+
+            Button("Call a SampleComplexDataClass Api"){
+                FakeApi().callSampleComplexDataClassByCallback(apiResult: apiDataClassCallback)
+            }
+            Text(apiDataClassCallback.response)
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -41,7 +111,7 @@ struct WebViewOpenListener: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView  {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator
-        webView.load(URLRequest(url: url))
+        webView.load(URLRequest(url: self.url))
         return webView
     }
 
@@ -62,7 +132,6 @@ struct WebViewOpenListener: UIViewRepresentable {
 
 struct WebViewOpenLoadListener: UIViewRepresentable {
     let url: URL
-
 
     func makeUIView(context: Context) -> WKWebView  {
     let webView = WKWebView()
@@ -97,19 +166,26 @@ struct WebViewOpenLoadListener: UIViewRepresentable {
 }
 
 struct MyWebView: UIViewControllerRepresentable {
+    @ObservedObject var callback: SwiftCallback
     typealias UIViewControllerType = ViewController
 
     func makeUIViewController(context: Context) -> ViewController {
-        return ViewController()
+    print("called:makeUIViewController")
+                let viewController = ViewController()
+                viewController.swiftCallback = callback
+                return viewController
     }
 
     func updateUIViewController(_ uiViewController: ViewController, context: Context) {
-        // Update the view controller if needed
+                if let url = URL(string: callback.currentUrl) {
+                    uiViewController.webView.load(URLRequest(url: url))
+                }
     }
 }
 
 class ViewController: UIViewController, WKScriptMessageHandler {
     var webView: WKWebView!
+    var swiftCallback: SwiftCallback!
 
     override func loadView() {
         let webConfiguration = WKWebViewConfiguration()
@@ -126,7 +202,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let url = URL(string: "https://reliable-crocodile.static.domains") {
+        if let url = URL(string: swiftCallback.currentUrl) {
             webView.load(URLRequest(url: url))
         }
     }
