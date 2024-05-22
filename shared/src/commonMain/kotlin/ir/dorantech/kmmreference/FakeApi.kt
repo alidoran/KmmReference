@@ -9,7 +9,7 @@ class FakeApi {
     suspend fun fetchUrl(): String {
         // Simulating API call delay
         delay(5000)
-        return "https://reliable-crocodile.static.domains"
+        return "https://bright-mole.static.domains/"
     }
 
     suspend fun fetchGoogleUrl(): String {
@@ -43,6 +43,5 @@ class FakeApi {
 interface ApiResult{
     fun onResult(response: String){}
     fun onUrl(url: String){}
-
     fun onSampleComplexDataClass(sampleComplexDataClass: SampleComplexDataClass?){}
 }

@@ -16,7 +16,7 @@ class SwiftCallback: ApiResult, ObservableObject {
     func onUrl(url: String) {
         DispatchQueue.main.async {
             self.currentUrl = url
-            print("called:onUrl")
+            print("called:onUrl : \(url)")
         }
     }
 
@@ -33,6 +33,7 @@ struct ContentView: View {
     @State private var simpleWebViewShow = false
     @State private var webViewOpenListenerShow = false
     @State private var webViewOpenLoadListenerShow = false
+    @State private var textFieldValue = "840"
 
 
     let greet = Greeting().greet()
@@ -43,6 +44,7 @@ struct ContentView: View {
     var body: some View {
     VStack{
 //    self.navigationController?.pushViewController(viewController, animated: true)
+
         MyWebView(callback: apiUrlCallback)
           	  Text(greet)
 
@@ -81,6 +83,11 @@ struct ContentView: View {
                 FakeApi().callSampleComplexDataClassByCallback(apiResult: apiDataClassCallback)
             }
             Text(apiDataClassCallback.response)
+
+            Button("Read text field value"){
+                print($textFieldValue)
+            }
+            TextField("Sample Text Field", text: $textFieldValue)
         }
     }
 }
@@ -183,7 +190,7 @@ struct MyWebView: UIViewControllerRepresentable {
     }
 }
 
-class ViewController: UIViewController, WKScriptMessageHandler {
+class ViewController: UIViewController, WKScriptMessageHandler, WKNavigationDelegate {
     var webView: WKWebView!
     var swiftCallback: SwiftCallback!
 
@@ -192,10 +199,11 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         let userContentController = WKUserContentController()
 
         userContentController.add(self, name: "toastMe")
-        userContentController.add(self, name: "notifyMe")
+        userContentController.add(self, name: "observe")
 
         webConfiguration.userContentController = userContentController
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
+        webView.navigationDelegate = self
         view = webView
     }
 
@@ -203,6 +211,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         super.viewDidLoad()
 
         if let url = URL(string: swiftCallback.currentUrl) {
+            print(url)
             webView.load(URLRequest(url: url))
         }
     }
@@ -210,8 +219,16 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "toastMe", let messageBody = message.body as? String {
             print("toastMe: \(messageBody)")
-        } else if message.name == "notifyMe", let messageBody = message.body as? String {
-            print("notifyMe: \(messageBody)")
+        } else if message.name == "observe", let messageBody = message.body as? String {
+            print("observe: \(messageBody)")
         }
+    }
+
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        print("Page load started")
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        print("Page load finished")
     }
 }

@@ -27,6 +27,10 @@ import androidx.lifecycle.lifecycleScope
 import ir.dorantech.kmmreference.FakeApi
 import ir.dorantech.kmmreference.Greeting
 import ir.dorantech.kmmreference.equevelents_tools.Json
+import ir.dorantech.kmmreference.getTransactionDateAndroid
+import ir.dorantech.kmmreference.getTransactionDateKmm
+import ir.dorantech.kmmreference.getTransactionTimeAndroid
+import ir.dorantech.kmmreference.getTransactionTimeKmm
 import ir.dorantech.kmmreference.simple_ktor.Ktor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -143,8 +147,8 @@ class MainActivity : ComponentActivity() {
         }
 
         @JavascriptInterface
-        fun notifyMe(text: String?) {
-            Log.d("JSInterface", "notifyMe: $text")
+        fun observe(message: String?) {
+            Log.d("JSInterface", "observe: $message")
         }
     }
 
@@ -167,5 +171,11 @@ class MainActivity : ComponentActivity() {
         }
         Text(text = "The status code of simpleGet is $simpleGetResult")
         Text(text = "The status code of simplePost is $simpleGetResult")
+
+        val a =getTransactionDateAndroid()
+        val b =getTransactionDateKmm()
+        val c =getTransactionTimeAndroid()
+        val d =getTransactionTimeKmm()
+        val e = d
     }
 }

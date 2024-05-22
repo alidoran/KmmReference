@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 rootProject.name = "KmmReference"
 include(":androidApp")
 include(":shared")
+include(":sharedCocoapods")
